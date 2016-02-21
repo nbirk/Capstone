@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -59,6 +60,50 @@ bool printNLIptableStat(const NL_Message& message)
    }
 }
 
+bool printNLEthernetStat(const NL_Message& message)
+{
+	//validates inputs to a function
+	if(message.IsInitialized())
+	{
+		//loop through all ethernetstat items in the message
+		for(int i = 0; i < message.ethernetstat_size(); i++)
+		{
+			//check if a registration or update message
+			if(message.ethernetstat(i).has_interface())
+			{
+				//message has an interface so it is a registration message
+				cout << setfill(' ') << setw(7) << message.ethernetstat(i).interface << "["
+					 << setfill(' ') << setw(3) << message.ethernetstat(i).ident()
+					 << "], Interface name: " << message.ethernetstsat(i).interfaceName() << endl;
+			}
+			else if(message.ethernetstat(i).has_rxGood() && message.ethernetstat(i).has_rxErrors()
+				&& message.ethernetstat(i).has_rxDropped() && message.ethernetstat(i).has_rxOverruns()
+				&& message.ethernetstat(i).has_rxFrame() && message.ethernetstat(i).has_rxFrame()
+				&& message.ethernetstat(i).has_txGood() && message.ethernetstat(i).has_txErrors()
+				&& message.ethernetstat(i).has_txDropped() && message.ethernetstat(i).has_txOverruns()
+				&& message.ethernetstat(i).has_txCarrier() && message.ethernetstat(i).has_txCollisions()
+				&& message.ethernetstat(i).has_status())
+				{
+					//has all rx and tx values so this message is an update
+					cout << setfill(' ') << setw(7) << message.ethernetstat(i).interface() << "["
+						 << setfill(' ') << setw(3) << message.ethernetstat(i).ident()
+						 << "], rxGood: " << setfill(' ') << setw(10) << message.ethernetstat(i).rxGood()
+						 << ", rxErrors: " << setfill(' ') << setw(10) << message.ethernetstat(i).rxErrors()
+						 << ", rxDropped: " << setfill(' ') << setw(10) << message.ethernetstat(i).rxDropped()
+						 << ", rxOverruns: " << setfill(' ') << setw(10) << message.ethernetstat(i).rxOverruns()
+						 << ", rxFrame: " << setfill(' ') << setw(10) << message.ethernetstat(i).rxFrame()
+						 << ", txGood: " << setfill(' ') << setw(10) << message.ethernetstat(i).txGood()
+						 << ", txErrors: " << setfill(' ') << setw(10) << message.ethernetstat(i).txErrors()
+						 << ", txDropped: " << setfill(' ') << setw(10) << message.ethernetstat(i).txDropped()
+						 << ", txOverruns: " << setfill(' ') << setw(10) << message.ethernetstat(i).txOverruns()
+						 << ", txCarrier: " << setfill(' ') << setw(10) << message.ethernetstat(i).txCarrier()
+						 << ", txCollisions: " << setfill(' ') << setw(10) << message.ethernetstat(i).txCollisions()
+						 << ", status: " << setfill(' ') << setw(10) << message.ethernetstat(i).status() << endl;
+				}
+		}
+	}
+}
+
 bool printNlMessage(const NL_Message& message)
 {
    // always good to validate inputs to a function, right?
@@ -95,7 +140,7 @@ bool printNlMessage(const NL_Message& message)
       // and again for Ethernet stats
       if(message.ethernetstat_size() > 0)
       {
-         //TODO: Implement a print function for these
+         printNLEthernetStat(message);
       }
    }
    else
