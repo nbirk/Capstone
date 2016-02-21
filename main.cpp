@@ -45,15 +45,15 @@ bool printNLIptableStat(const NL_Message& message)
             // this has a description so it's a registration message
             cout << setfill(' ') << setw(7) << message.ipstat(i).chain() << "["
                  << setfill(' ') << setw(3) <<  message.ipstat(i).ident()
-                 << "] Description: " << message.ipstat(i).desc() << endl;
+                 << "], Description: " << message.ipstat(i).desc() << endl;
          }
          else if(message.ipstat(i).has_bytecount() && message.ipstat(i).has_packetcount())
          {
             // this has both byte and packet counts, so it's an update
             cout << setfill(' ') << setw(7) << message.ipstat(i).chain() << "["
                  << setfill(' ') << setw(3) << message.ipstat(i).ident()
-                 << "] Bytes: " << setfill(' ') << setw(10) << message.ipstat(i).bytecount()
-                 << " Packets: " << setfill(' ') << setw(10) << message.ipstat(i).packetcount() << endl;
+                 << "], Bytes: " << setfill(' ') << setw(10) << message.ipstat(i).bytecount()
+                 << ", Packets: " << setfill(' ') << setw(10) << message.ipstat(i).packetcount() << endl;
          }
       }
    }
