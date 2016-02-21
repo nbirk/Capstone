@@ -1,0 +1,91 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright:   Copyright 2014 Rockwell Collins. All Rights Reserved.
+//
+// Source File:  PBNetStat.proto
+//
+// Description:
+//
+//    The messages defined in this file are used for transfering network stats
+//       between the NetStat server and applications.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+message NL_IpTableStat
+{
+   required uint32 ident = 1;       //Required for Registration and identification
+                                    //Ident 0 reserved for default policy
+   required string chain = 2;       //Required for Registration and identification
+   optional string desc = 3;        //Required for Registration
+                                    //Desc will be the policy description for Ident 0
+   optional uint64 byteCount = 4;
+   optional uint64 packetCount = 5;   
+}
+
+message NL_EthernetStat
+{
+   enum Status {DOWN = 0; UP = 1;}
+
+   required uint32 ident = 1;          //Required for Registration
+   optional string interface = 2;      //Required for Registration
+   optional string interfaceName = 3;  //Required for Registration
+   optional uint64 rxGood = 4;
+   optional uint64 rxErrors = 5;
+   optional uint64 rxDropped = 6;
+   optional uint64 rxOverruns = 7;
+   optional uint64 rxFrame = 8;
+   optional uint64 txGood = 9;
+   optional uint64 txErrors = 10;
+   optional uint64 txDropped = 11;
+   optional uint64 txOverruns = 12;
+   optional uint64 txCarrier = 13;
+   optional uint64 txCollisions = 14;
+   optional Status status = 15;
+}
+
+message NL_SwitchStat
+{
+   enum Status {DOWN = 0; UP = 1;}
+   enum Duplex {FULL = 0; HALF = 1;}
+   enum Speed {MB10 = 0; MB100 = 1; MB1000 = 2;}
+   
+   required uint32 ident = 1;          //Required for Registration
+   optional Status stat = 2;
+   optional Duplex dplx = 3;
+   optional Speed spd = 4;
+   optional uint64 ingressbytes = 5;
+   optional uint64 ingressunicast = 6;
+   optional uint64 ingressbroadcast = 7;
+   optional uint64 ingressmulticast = 8;
+   optional uint64 ingresspause = 9;
+   optional uint64 ingressundersize = 10;
+   optional uint64 ingressfragments = 11;
+   optional uint64 ingressoversize = 12;
+   optional uint64 ingressjabber = 13;
+   optional uint64 ingressrxerr = 14;
+   optional uint64 ingressfcserr = 15;
+   optional uint64 egressbytes = 16;
+   optional uint64 egressunicast = 17;
+   optional uint64 egressbroadcast = 18;
+   optional uint64 egressmulticast = 19;
+   optional uint64 egresspause = 20;
+   optional uint64 egressexcessive = 21;
+   optional uint64 egresscollisions = 22;
+   optional uint64 egressother = 23;
+}
+
+message NL_Message
+{
+   enum Source  { IO = 0; ADS = 1; EFB = 2; COMM = 3; INVALID = -1;};
+   enum Command { REGISTER = 0; REGISTER_REQUEST = 1; UPDATE = 2; UPDATE_REQUEST = 3; CLEAR = 4;};
+   enum Network { EDN = 0; IDN = 1; };
+    
+   required Source source   = 1 [default = INVALID];
+   required Command command = 2 [default = REGISTER];
+
+   repeated NL_IpTableStat ipStat        = 3;
+   repeated NL_SwitchStat switchStat     = 4;
+   repeated NL_EthernetStat ethernetStat = 5;
+
+   optional Network switchStatNetwork = 6;
+}
